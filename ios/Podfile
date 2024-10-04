@@ -14,7 +14,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'CleanArchitectureTemplateApp' do
+target 'PokemonApp' do
   config = use_native_modules!
 
   use_react_native!(
@@ -23,7 +23,7 @@ target 'CleanArchitectureTemplateApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'CleanArchitectureTemplateAppTests' do
+  target 'PokemonAppTests' do
     inherit! :complete
     # Pods for testing
   end
