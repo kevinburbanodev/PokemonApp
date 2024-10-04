@@ -1,4 +1,4 @@
-package com.cleanarchitecturetemplateapp
+package com.PokemonApp
 
 import android.app.Application
 import com.facebook.react.PackageList

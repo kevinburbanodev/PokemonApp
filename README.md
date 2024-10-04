@@ -16,7 +16,7 @@
    - **Testing**: After updating dependencies, it's always a good idea to run extensive tests to ensure no new issues have been introduced to your application.
    - **Version conflicts**: In some cases, you might encounter version conflicts between different packages. If this happens, you may need to manually adjust the version ranges in your `package.json` or resolve dependencies manually.
 
-- **Rename the app**: The template's default name is `CleanArchitectureTemplateApp`, and this is the name that will appear when the app is installed on mobile devices. To ensure your app has a custom name for both Android, iOS, and in `package.json`, we recommend using a tool like [react-native-rename](https://www.npmjs.com/package/react-native-rename). Once you've renamed the app, you can uninstall the package or, if you prefer, manually update the app name if you have the expertise.
+- **Rename the app**: The template's default name is `PokemonApp`, and this is the name that will appear when the app is installed on mobile devices. To ensure your app has a custom name for both Android, iOS, and in `package.json`, we recommend using a tool like [react-native-rename](https://www.npmjs.com/package/react-native-rename). Once you've renamed the app, you can uninstall the package or, if you prefer, manually update the app name if you have the expertise.
 
 ---
 
