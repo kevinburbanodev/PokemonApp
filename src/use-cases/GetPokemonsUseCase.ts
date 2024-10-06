@@ -4,7 +4,7 @@ import { PokemonRepository } from "../interfaces/PokemonRepository";
 export class GetPokemonsUseCase {
     constructor(private pokemonRepository: PokemonRepository) { }
 
-    execute(): Promise<Pokemon[]> {
-        return this.pokemonRepository.getAllPokemons();
+    execute(offset: number, limit: number): Promise<Pokemon[]> {
+        return this.pokemonRepository.getAllPokemons(offset, limit);
     }
 }

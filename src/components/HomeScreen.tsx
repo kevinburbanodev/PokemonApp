@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { FlatList, View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, View, StyleSheet, Image, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/navigator';
 import { Text, Card } from 'react-native-paper';
@@ -14,11 +14,29 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     const getPokemonsUseCase = new GetPokemonsUseCase(new PokemonRepositoryImpl(PokemonManager));
     const { pokemons, loadPokemons } = usePokemonViewModel(getPokemonsUseCase);
+    const [loading, setLoading] = useState(false);
 
-    // Cargar pokemons al montar el componente
     useEffect(() => {
-        loadPokemons();
+        loadPokemons(); // Cargar Pokémon al montar el componente
     }, []);
+
+    const handleLoadMore = async () => {
+        if (!loading) {
+            setLoading(true);
+            await loadPokemons();
+            setLoading(false);
+        }
+    };
+
+    const renderFooter = () => {
+        if (!loading) return null;
+
+        return (
+            <View style={styles.footer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -29,6 +47,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 renderItem={pokemonItem}
                 numColumns={2}
                 columnWrapperStyle={styles.row}
+                onEndReached={handleLoadMore} // Función que se llama al llegar al final de la lista
+                onEndReachedThreshold={0.1} // Umbral para determinar cuándo se considera que se ha llegado al final
+                ListFooterComponent={renderFooter} // Componente que se muestra al final de la lista
             />
         </View>
     );
@@ -64,12 +85,10 @@ const pokemonItem = ({ item }: { item: Pokemon }) => {
     );
 };
 
-// Función que retorna el color según el primer tipo del Pokémon
 const getPokemonTypeColor = (type: string): string => {
-    return typeColors[type] || '#A8A8A8'; // Color gris si no se encuentra el tipo
+    return typeColors[type] || '#A8A8A8';
 };
 
-// Mapeo de colores de tipos
 const typeColors: { [key: string]: string } = {
     grass: '#78C850',
     poison: '#A040A0',
@@ -89,7 +108,6 @@ const typeColors: { [key: string]: string } = {
     dark: '#705848',
     steel: '#B8B8D0',
     flying: '#A890F0',
-    // Agrega más tipos según sea necesario
 };
 
 const styles = StyleSheet.create({
@@ -153,6 +171,10 @@ const styles = StyleSheet.create({
     pokemonImage: {
         width: 90,
         height: 90,
+    },
+    footer: {
+        paddingVertical: 20,
+        alignItems: 'center',
     }
 });
 

@@ -15,18 +15,15 @@ interface PokemonResponse {
 
 export const PokemonManager = {
     pokeApiUrl: "https://pokeapi.co/api/v2" as string,
-    limit: 30 as number,
-    offset: 0 as number,
     pokemons: [] as Pokemon[],
 
-    async getPokemons(): Promise<Pokemon[]> {
+    async getPokemons(offset: number = 0, limit: number = 30): Promise<Pokemon[]> {
         try {
-            const url: string = `${this.pokeApiUrl}/pokemon?limit=${this.limit}&offset=${this.offset}`;
+            const url: string = `${this.pokeApiUrl}/pokemon?limit=${limit}&offset=${offset}`;
             const response: AxiosResponse<PokemonResponse, any> = await axios.get<PokemonResponse>(url);
             const data: PokemonResponse = response.data;
             const summaryPokemons: PokemonResult[] = data.results;
 
-            // Creamos un array de promesas para obtener los detalles de cada Pokémon
             const pokemonPromises = summaryPokemons.map(async (detailedPokemon) => {
                 const response = await axios.get(detailedPokemon.url);
                 const data = response.data;
@@ -48,9 +45,7 @@ export const PokemonManager = {
                 } as Pokemon;
             });
 
-            // Esperamos a que todas las promesas se resuelvan
             this.pokemons = await Promise.all(pokemonPromises);
-
             return this.pokemons;
         } catch (error) {
             console.error('Error fetching Pokémon data:', error);

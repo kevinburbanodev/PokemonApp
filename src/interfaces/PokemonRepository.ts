@@ -1,6 +1,6 @@
 import { Pokemon } from "../entities/Pokemon";
 
 export interface PokemonRepository {
-    getAllPokemons(): Promise<Pokemon[]>;
+    getAllPokemons(offset: number, limit: number): Promise<Pokemon[]>;
     getPokemonById(): Promise<Pokemon>;
 }
