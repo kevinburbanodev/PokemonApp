@@ -1,15 +1,20 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../components/HomeScreen';
-import ProfileScreen from '../components/ProfileScreen';
 import UsersScreen from '../components/UsersScreen';
+
+const theme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        background: 'white',
+    },
+};
 
 // Define los tipos de las rutas y parámetros
 export type RootStackParamList = {
     Home: undefined;
-    Users: undefined;
-    Profile: { name: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -17,7 +22,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const AppNavigator = () => {
 
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={theme}>
             <Stack.Navigator
                 initialRouteName="Home"
                 screenOptions={{
@@ -27,8 +32,6 @@ const AppNavigator = () => {
                 }}
             >
                 <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="Users" component={UsersScreen} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

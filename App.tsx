@@ -7,8 +7,7 @@ const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    // primary: 'tomato',
-    // secondary: 'yellow',
+    background: 'white',
   },
 };
 
@@ -16,11 +15,10 @@ function App(): React.JSX.Element {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaView style={{ flex: 1 }}>
-        <AppNavigator>
-        </AppNavigator>
+        <AppNavigator />
       </SafeAreaView>
     </PaperProvider>
-  )
+  );
 }
 
 export default App;

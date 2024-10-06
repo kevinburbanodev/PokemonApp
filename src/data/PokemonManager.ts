@@ -15,7 +15,7 @@ interface PokemonResponse {
 
 export const PokemonManager = {
     pokeApiUrl: "https://pokeapi.co/api/v2" as string,
-    limit: 10 as number,
+    limit: 30 as number,
     offset: 0 as number,
     pokemons: [] as Pokemon[],
 
