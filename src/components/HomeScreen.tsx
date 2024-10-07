@@ -41,16 +41,24 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text variant="displaySmall" style={styles.homeTitle}>Pokedex</Text>
-            <FlatList
-                data={pokemons}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={pokemonItem}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
-                onEndReached={handleLoadMore} // Función que se llama al llegar al final de la lista
-                onEndReachedThreshold={0.1} // Umbral para determinar cuándo se considera que se ha llegado al final
-                ListFooterComponent={renderFooter} // Componente que se muestra al final de la lista
-            />
+            {
+                pokemons.length == 0 ? (
+                    <View style={styles.initialLoadingContainer}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                    </View>
+                ) : (
+                    <FlatList
+                        data={pokemons}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={pokemonItem}
+                        numColumns={2}
+                        columnWrapperStyle={styles.row}
+                        onEndReached={handleLoadMore} // Función que se llama al llegar al final de la lista
+                        onEndReachedThreshold={0.1} // Umbral para determinar cuándo se considera que se ha llegado al final
+                        ListFooterComponent={renderFooter} // Componente que se muestra al final de la lista
+                    />
+                )
+            }
         </View>
     );
 };
@@ -59,40 +67,38 @@ const pokemonItem = ({ item }: { item: Pokemon }) => {
     const backgroundColor = getPokemonTypeColor(item.types[0]);
 
     return (
-        <TouchableWithoutFeedback onPress={() => console.log(item.name)}>
-            <Card style={[styles.pokemonCard, { backgroundColor }]}>
-                <View style={styles.rowCardContent}>
-                    <View style={styles.cardDescriptionContent}>
-                        <Text style={styles.pokemonText}>{item.name}</Text>
-                        <View>
-                            {item.types.map((type, index) => (
-                                <View key={index} style={styles.typeBadge}>
-                                    <Text style={styles.typeText}>{type}</Text>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                    <View style={styles.cardImageContent}>
-                        {
-                            item.officialArtwork.frontDefault != null ? (
-                                <Image
-                                    source={{ uri: item.officialArtwork.frontDefault }}
-                                    defaultSource={require('../assets/jar-loading.gif')}
-                                    style={styles.pokemonImage}
-                                    resizeMode='cover'
-                                />
-                            ) : (
-                                <Image
-                                    source={require('../assets/no-image.png')}
-                                    style={styles.pokemonImage}
-                                    resizeMode='cover'
-                                />
-                            )
-                        }
+        <Card onPress={() => console.log(item.name)} style={[styles.pokemonCard, { backgroundColor }]}>
+            <View style={styles.rowCardContent}>
+                <View style={styles.cardDescriptionContent}>
+                    <Text style={styles.pokemonText}>{item.name}</Text>
+                    <View>
+                        {item.types.map((type, index) => (
+                            <View key={index} style={styles.typeBadge}>
+                                <Text style={styles.typeText}>{type}</Text>
+                            </View>
+                        ))}
                     </View>
                 </View>
-            </Card>
-        </TouchableWithoutFeedback>
+                <View style={styles.cardImageContent}>
+                    {
+                        item.officialArtwork.frontDefault != null ? (
+                            <Image
+                                source={{ uri: item.officialArtwork.frontDefault }}
+                                defaultSource={require('../assets/jar-loading.gif')}
+                                style={styles.pokemonImage}
+                                resizeMode='cover'
+                            />
+                        ) : (
+                            <Image
+                                source={require('../assets/no-image.png')}
+                                style={styles.pokemonImage}
+                                resizeMode='cover'
+                            />
+                        )
+                    }
+                </View>
+            </View>
+        </Card>
     );
 };
 
@@ -126,6 +132,11 @@ const styles = StyleSheet.create({
         margin: 5,
         marginLeft: 10,
         fontWeight: 'bold'
+    },
+    initialLoadingContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     container: {
         flex: 1,
