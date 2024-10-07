@@ -14,7 +14,7 @@ interface PokemonResponse {
 }
 
 export const PokemonManager = {
-    pokeApiUrl: "https://pokeapi.co/api/v2" as string,
+    pokeApiUrl: 'https://pokeapi.co/api/v2' as string,
     pokemons: [] as Pokemon[],
 
     async getPokemons(offset: number = 0, limit: number = 30): Promise<Pokemon[]> {
@@ -38,7 +38,7 @@ export const PokemonManager = {
                     moves: data.moves.map((move: { move: { name: string } }) => move.move.name),
                     forms: data.forms.map((form: { name: string }) => form.name),
                     officialArtwork: {
-                        frontDefault: data.sprites?.other?.["official-artwork"]?.front_default || "default_image_url"
+                        frontDefault: data?.sprites?.other?.['official-artwork']?.front_default || null
                     },
                     types: types,
                     order: data.order,

@@ -73,11 +73,22 @@ const pokemonItem = ({ item }: { item: Pokemon }) => {
                         </View>
                     </View>
                     <View style={styles.cardImageContent}>
-                        <Image
-                            source={{ uri: item.officialArtwork.frontDefault }}
-                            style={styles.pokemonImage}
-                            resizeMode='cover'
-                        />
+                        {
+                            item.officialArtwork.frontDefault != null ? (
+                                <Image
+                                    source={{ uri: item.officialArtwork.frontDefault }}
+                                    defaultSource={require('../assets/jar-loading.gif')}
+                                    style={styles.pokemonImage}
+                                    resizeMode='cover'
+                                />
+                            ) : (
+                                <Image
+                                    source={require('../assets/no-image.png')}
+                                    style={styles.pokemonImage}
+                                    resizeMode='cover'
+                                />
+                            )
+                        }
                     </View>
                 </View>
             </Card>
