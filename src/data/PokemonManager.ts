@@ -27,11 +27,18 @@ export const PokemonManager = {
             const pokemonPromises = summaryPokemons.map(async (detailedPokemon) => {
                 const response = await axios.get(detailedPokemon.url);
                 const data = response.data;
+                const speciesResponse = await axios.get(`${this.pokeApiUrl}/pokemon-species/${data.id}`);
                 const types = data?.types.map((element: { type: { name: string; }; }) => element.type.name) || [];
+                const description = speciesResponse.data.flavor_text_entries.find((entry: any) => entry.language.name === 'en')?.flavor_text || '';
+
+                // Obtener evoluciones
+                // const evolutionChainResponse = await axios.get(speciesResponse.data.evolution_chain.url);
+
 
                 return {
                     id: data.id,
                     name: data.name,
+                    description: description,
                     baseExperience: data.base_experience,
                     height: data.height,
                     abilities: data.abilities.map((ability: { ability: { name: string } }) => ability.ability.name),

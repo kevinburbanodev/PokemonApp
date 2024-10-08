@@ -2,6 +2,8 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../components/HomeScreen';
+import { Pokemon } from '../entities/Pokemon';
+import PokemonDetailScreen from '../components/PokemonDetailScreen';
 
 const theme = {
     ...DefaultTheme,
@@ -14,6 +16,7 @@ const theme = {
 // Define los tipos de las rutas y parámetros
 export type RootStackParamList = {
     Home: undefined;
+    PokemonDetail: Pokemon
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -25,14 +28,13 @@ const AppNavigator = () => {
             <Stack.Navigator
                 initialRouteName="Home"
                 screenOptions={{
-                    headerShown: true,
+                    headerShown: false,
                     headerTitle: "",
                     animation: "slide_from_right",
                 }}
             >
-                <Stack.Screen name="Home" component={HomeScreen} options={{
-                    headerShown: false
-                }} />
+                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen name="PokemonDetail" component={PokemonDetailScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );
