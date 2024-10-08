@@ -5,8 +5,8 @@ import { PokemonManager } from "./PokemonManager";
 export class PokemonRepositoryImpl implements PokemonRepository {
     constructor(private pokemonManager: typeof PokemonManager) { }
 
-    async getAllPokemons(): Promise<Pokemon[]> {
-        const pokemons = await this.pokemonManager.getPokemons();
+    async getAllPokemons(offset: number, limit: number): Promise<Pokemon[]> {
+        const pokemons = await this.pokemonManager.getPokemons(offset, limit);
         return pokemons;
     }
     async getPokemonById(): Promise<Pokemon> {
