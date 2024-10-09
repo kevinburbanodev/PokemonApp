@@ -77,12 +77,36 @@ export const PokemonManager = {
 
         try {
             const chainResponse = await axios.get(chainUrl);
-            await this.processEvolutionChain(chainResponse.data.chain, evolutions);
+            const chainData = chainResponse.data.chain;
+
+            // Añadir el Pokémon inicial a la lista de evoluciones
+            await this.addInitialPokemonToEvolutions(chainData, evolutions);
+
+            // Procesar el resto de la cadena de evolución
+            await this.processEvolutionChain(chainData, evolutions);
         } catch (error) {
             console.error('Error fetching Pokémon evolutions:', error);
         }
 
         return evolutions;
+    },
+
+    // Función para añadir el Pokémon inicial a la lista de evoluciones
+    async addInitialPokemonToEvolutions(chainData: any, evolutions: { name: string; officialArtwork: { frontDefault: string | null } }[]) {
+        const speciesUrl = chainData.species.url;
+
+        // Solicita el ID de la especie para obtener la imagen del Pokémon inicial
+        const speciesResponse = await axios.get(speciesUrl);
+        const pokemonId = speciesResponse.data.id;
+
+        // Usa el ID para obtener la información del Pokémon y su imagen
+        const pokemonResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+        const officialArtwork = pokemonResponse.data.sprites?.other?.['official-artwork']?.front_default || null;
+
+        evolutions.push({
+            name: chainData.species.name,
+            officialArtwork: { frontDefault: officialArtwork },
+        });
     },
 
     // Función para procesar recursivamente la cadena de evolución
@@ -109,4 +133,5 @@ export const PokemonManager = {
             }
         }
     }
+
 };
