@@ -1,6 +1,7 @@
 export interface Pokemon {
     id: number;
     name: string;
+    description: string;
     baseExperience: number;
     height: number;
     abilities: string[];
@@ -10,5 +11,7 @@ export interface Pokemon {
         frontDefault: string;
     };
     types: string[];
+    weaknessUrl: string;
+    evolutionsUrl: string;
     order: number;
 }

@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, StyleSheet, Image, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
+import { FlatList, View, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/navigator';
 import { Text, Card } from 'react-native-paper';
-import { GetPokemonsUseCase } from '../use-cases/GetPokemonsUseCase';
 import { PokemonRepositoryImpl } from '../data/PokemonRepositoryImpl';
 import { PokemonManager } from '../data/PokemonManager';
 import { usePokemonViewModel } from '../presenters/PokemonViewModel';
 import { Pokemon } from '../entities/Pokemon';
+import Animated from 'react-native-reanimated';
+import { getPokemonTypeColor } from '../utils/PokemonUtils';
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-    const getPokemonsUseCase = new GetPokemonsUseCase(new PokemonRepositoryImpl(PokemonManager));
-    const { pokemons, loadPokemons } = usePokemonViewModel(getPokemonsUseCase);
+    const { pokemons, loadPokemons } = usePokemonViewModel(new PokemonRepositoryImpl(PokemonManager));
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -50,7 +50,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                     <FlatList
                         data={pokemons}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={pokemonItem}
+                        renderItem={({ item }) => pokemonItem({ item, navigation })}
                         numColumns={2}
                         columnWrapperStyle={styles.row}
                         onEndReached={handleLoadMore} // Función que se llama al llegar al final de la lista
@@ -63,11 +63,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     );
 };
 
-const pokemonItem = ({ item }: { item: Pokemon }) => {
+const pokemonItem = ({ item, navigation }: { item: Pokemon; navigation: any }) => {
     const backgroundColor = getPokemonTypeColor(item.types[0]);
 
     return (
-        <Card onPress={() => console.log(item.name)} style={[styles.pokemonCard, { backgroundColor }]}>
+        <Card onPress={() => navigation.navigate('PokemonDetail', item)} style={[styles.pokemonCard, { backgroundColor }]}>
             <View style={styles.rowCardContent}>
                 <View style={styles.cardDescriptionContent}>
                     <Text style={styles.pokemonText}>{item.name}</Text>
@@ -82,11 +82,12 @@ const pokemonItem = ({ item }: { item: Pokemon }) => {
                 <View style={styles.cardImageContent}>
                     {
                         item.officialArtwork.frontDefault != null ? (
-                            <Image
+                            <Animated.Image
                                 source={{ uri: item.officialArtwork.frontDefault }}
                                 defaultSource={require('../assets/jar-loading.gif')}
                                 style={styles.pokemonImage}
                                 resizeMode='cover'
+                                sharedTransitionTag={`${item.id}`}
                             />
                         ) : (
                             <Image
@@ -100,31 +101,6 @@ const pokemonItem = ({ item }: { item: Pokemon }) => {
             </View>
         </Card>
     );
-};
-
-const getPokemonTypeColor = (type: string): string => {
-    return typeColors[type] || '#A8A8A8';
-};
-
-const typeColors: { [key: string]: string } = {
-    grass: '#78C850',
-    poison: '#A040A0',
-    fire: '#F08030',
-    water: '#6890F0',
-    bug: '#A8B820',
-    normal: '#A8A878',
-    electric: '#F8D030',
-    ground: '#E0C068',
-    fairy: '#EE99AC',
-    fighting: '#C03028',
-    psychic: '#F85888',
-    rock: '#B8A038',
-    ghost: '#705898',
-    ice: '#98D8D8',
-    dragon: '#7038F8',
-    dark: '#705848',
-    steel: '#B8B8D0',
-    flying: '#A890F0',
 };
 
 const styles = StyleSheet.create({
