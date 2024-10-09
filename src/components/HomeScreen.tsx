@@ -3,7 +3,6 @@ import { FlatList, View, StyleSheet, Image, ActivityIndicator } from 'react-nati
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/navigator';
 import { Text, Card } from 'react-native-paper';
-import { GetPokemonsUseCase } from '../use-cases/GetPokemonsUseCase';
 import { PokemonRepositoryImpl } from '../data/PokemonRepositoryImpl';
 import { PokemonManager } from '../data/PokemonManager';
 import { usePokemonViewModel } from '../presenters/PokemonViewModel';
@@ -14,8 +13,7 @@ import { getPokemonTypeColor } from '../utils/PokemonUtils';
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-    const getPokemonsUseCase = new GetPokemonsUseCase(new PokemonRepositoryImpl(PokemonManager));
-    const { pokemons, loadPokemons } = usePokemonViewModel(getPokemonsUseCase);
+    const { pokemons, loadPokemons } = usePokemonViewModel(new PokemonRepositoryImpl(PokemonManager));
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {

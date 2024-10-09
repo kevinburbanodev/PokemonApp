@@ -11,5 +11,7 @@ export interface Pokemon {
         frontDefault: string;
     };
     types: string[];
+    weaknessUrl: string;
+    evolutionsUrl: string;
     order: number;
 }

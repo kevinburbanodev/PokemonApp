@@ -4,12 +4,23 @@ import { View, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { getPokemonTypeColor } from "../utils/PokemonUtils";
 import { IconButton, Text } from "react-native-paper";
+import { PokemonRepositoryImpl } from '../data/PokemonRepositoryImpl';
+import { PokemonManager } from "../data/PokemonManager";
+import { usePokemonViewModel } from "../presenters/PokemonViewModel";
+import { useEffect } from "react";
 
 type PokemonDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'PokemonDetail'>;
 
 const PokemonDetailScreen: React.FC<PokemonDetailScreenProps> = ({ navigation, route }) => {
     const pokemon = route.params;
     const backgroundColor = getPokemonTypeColor(pokemon.types[0]);
+
+    const { weaknesses, evolutions, getWeaknesses, getEvolutions } = usePokemonViewModel(new PokemonRepositoryImpl(PokemonManager));
+
+    useEffect(() => {
+        getWeaknesses(pokemon.weaknessUrl);
+        getEvolutions(pokemon.evolutionsUrl);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -49,12 +60,12 @@ const PokemonDetailScreen: React.FC<PokemonDetailScreenProps> = ({ navigation, r
                 </View>
                 <View style={styles.pokemonDescriptionContainer}>
                     <Text style={styles.pokemonDescriptionText}>
-                        {pokemon.description.replace(/\n/g, ' ')} {/* Reemplaza \n con un espacio */}
+                        {pokemon.description.replace(/\n/g, ' ')}
                     </Text>
                 </View>
             </View>
             <View style={styles.pokemonDataContainer}>
-                {/* Puedes añadir más datos aquí si es necesario */}
+
             </View>
         </View>
     );

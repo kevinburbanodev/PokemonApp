@@ -31,9 +31,9 @@ export const PokemonManager = {
                 const types = data?.types.map((element: { type: { name: string; }; }) => element.type.name) || [];
                 const description = speciesResponse.data.flavor_text_entries.find((entry: any) => entry.language.name === 'en')?.flavor_text || '';
 
-                // Obtener evoluciones
-                // const evolutionChainResponse = await axios.get(speciesResponse.data.evolution_chain.url);
-
+                // Obtenemos las URLs de debilidades y evoluciones
+                const typeUrl = data.types[0].type.url;
+                const evolutionChainUrl = speciesResponse.data.evolution_chain.url;
 
                 return {
                     id: data.id,
@@ -48,6 +48,8 @@ export const PokemonManager = {
                         frontDefault: data?.sprites?.other?.['official-artwork']?.front_default || null
                     },
                     types: types,
+                    weaknessUrl: typeUrl,
+                    evolutionsUrl: evolutionChainUrl,
                     order: data.order,
                 } as Pokemon;
             });
@@ -58,5 +60,53 @@ export const PokemonManager = {
             console.error('Error fetching Pokémon data:', error);
             return [];
         }
+    },
+
+    async getWeaknesses(typeUrl: string): Promise<string[]> {
+        try {
+            const response = await axios.get(typeUrl);
+            return response.data?.damage_relations?.double_damage_from?.map((element: { name: string }) => element.name) || [];
+        } catch (error) {
+            console.error('Error fetching Pokémon weaknesses:', error);
+            return [];
+        }
+    },
+
+    async getEvolutions(chainUrl: string): Promise<{ name: string; officialArtwork: { frontDefault: string | null } }[]> {
+        const evolutions: { name: string; officialArtwork: { frontDefault: string | null } }[] = [];
+
+        try {
+            const chainResponse = await axios.get(chainUrl);
+            await this.processEvolutionChain(chainResponse.data.chain, evolutions);
+        } catch (error) {
+            console.error('Error fetching Pokémon evolutions:', error);
+        }
+
+        return evolutions;
+    },
+
+    // Función para procesar recursivamente la cadena de evolución
+    async processEvolutionChain(chain: any, evolutions: { name: string; officialArtwork: { frontDefault: string | null } }[]) {
+        for (const evolution of chain.evolves_to) {
+            const speciesUrl = evolution.species.url;
+
+            // Solicita el ID de la especie para obtener la imagen del Pokémon
+            const speciesResponse = await axios.get(speciesUrl);
+            const pokemonId = speciesResponse.data.id;
+
+            // Usa el ID para obtener la información del Pokémon y su imagen
+            const pokemonResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+            const officialArtwork = pokemonResponse.data.sprites?.other?.['official-artwork']?.front_default || null;
+
+            evolutions.push({
+                name: evolution.species.name,
+                officialArtwork: { frontDefault: officialArtwork },
+            });
+
+            // Si hay más evoluciones, realiza la llamada recursiva para procesarlas
+            if (evolution.evolves_to.length > 0) {
+                await this.processEvolutionChain(evolution, evolutions);
+            }
+        }
     }
-}
+};
