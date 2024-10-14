@@ -4,6 +4,7 @@ import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../components/HomeScreen';
 import { Pokemon } from '../entities/Pokemon';
 import PokemonDetailScreen from '../components/PokemonDetailScreen';
+import SearchScreen from '../components/SearchScreen';
 
 const theme = {
     ...DefaultTheme,
@@ -16,7 +17,8 @@ const theme = {
 // Define los tipos de las rutas y parámetros
 export type RootStackParamList = {
     Home: undefined;
-    PokemonDetail: Pokemon
+    PokemonDetail: { pokemon: Pokemon, sharedTransitionTag: string },
+    Search: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -35,6 +37,7 @@ const AppNavigator = () => {
             >
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="PokemonDetail" component={PokemonDetailScreen} />
+                <Stack.Screen name="Search" options={{ headerShown: true }} component={SearchScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

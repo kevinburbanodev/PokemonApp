@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, View, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/navigator';
-import { Text, Card } from 'react-native-paper';
+import { Text, Card, IconButton } from 'react-native-paper';
 import { PokemonRepositoryImpl } from '../data/PokemonRepositoryImpl';
 import { PokemonManager } from '../data/PokemonManager';
 import { usePokemonViewModel } from '../presenters/PokemonViewModel';
@@ -40,7 +40,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text variant="displaySmall" style={styles.homeTitle}>Pokedex</Text>
+            <View style={styles.headerContainer}>
+                <Text variant="displaySmall" style={styles.homeTitle}>PokeApp</Text>
+                <IconButton
+                    icon="text-search"
+                    size={35}
+                    onPress={() => navigation.navigate('Search')}
+
+                />
+            </View>
             {
                 pokemons.length == 0 ? (
                     <View style={styles.initialLoadingContainer}>
@@ -67,7 +75,7 @@ const pokemonItem = ({ item, navigation }: { item: Pokemon; navigation: any }) =
     const backgroundColor = getPokemonTypeColor(item.types[0]);
 
     return (
-        <Card onPress={() => navigation.navigate('PokemonDetail', item)} style={[styles.pokemonCard, { backgroundColor }]}>
+        <Card onPress={() => navigation.navigate('PokemonDetail', { pokemon: item, sharedTransitionTag: `home-${item.id}` })} style={[styles.pokemonCard, { backgroundColor }]}>
             <View style={styles.rowCardContent}>
                 <View style={styles.cardDescriptionContent}>
                     <Text style={styles.pokemonText}>{item.name}</Text>
@@ -87,7 +95,7 @@ const pokemonItem = ({ item, navigation }: { item: Pokemon; navigation: any }) =
                                 defaultSource={require('../assets/jar-loading.gif')}
                                 style={styles.pokemonImage}
                                 resizeMode='cover'
-                                sharedTransitionTag={`${item.id}`}
+                                sharedTransitionTag={`home-${item.id}`}
                             />
                         ) : (
                             <Image
@@ -104,6 +112,10 @@ const pokemonItem = ({ item, navigation }: { item: Pokemon; navigation: any }) =
 };
 
 const styles = StyleSheet.create({
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
+    },
     homeTitle: {
         margin: 5,
         marginLeft: 10,

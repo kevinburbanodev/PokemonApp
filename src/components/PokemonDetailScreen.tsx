@@ -12,7 +12,8 @@ import { useEffect, useState } from "react";
 type PokemonDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'PokemonDetail'>;
 
 const PokemonDetailScreen: React.FC<PokemonDetailScreenProps> = ({ navigation, route }) => {
-    const pokemon = route.params;
+    const pokemon = route.params.pokemon;
+    const sharedTransitionTag = route.params.sharedTransitionTag;
     const backgroundColor = getPokemonTypeColor(pokemon.types[0]);
     const [loading, setLoading] = useState(true);
     const { weaknesses, evolutions, getWeaknesses, getEvolutions } = usePokemonViewModel(new PokemonRepositoryImpl(PokemonManager));
@@ -49,7 +50,7 @@ const PokemonDetailScreen: React.FC<PokemonDetailScreenProps> = ({ navigation, r
                         defaultSource={require('../assets/jar-loading.gif')}
                         style={styles.pokemonImage}
                         resizeMode='cover'
-                        sharedTransitionTag={`${pokemon.id}`}
+                        sharedTransitionTag={sharedTransitionTag ?? `${pokemon.id}`}
                     />
                 </View>
             </View>
