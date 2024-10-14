@@ -62,6 +62,49 @@ export const PokemonManager = {
         }
     },
 
+    async getPokemonByNameOrId(nameOrId: string): Promise<Pokemon | null> {
+        try {
+            const url: string = `${this.pokeApiUrl}/pokemon/${nameOrId.toLowerCase()}`;
+            const response = await axios.get(url);
+            const data = response.data;
+
+            if (data) {
+                const speciesResponse = await axios.get(`${this.pokeApiUrl}/pokemon-species/${data.id}`);
+                const types = data?.types.map((element: { type: { name: string; }; }) => element.type.name) || [];
+                const description = speciesResponse.data.flavor_text_entries.find((entry: any) => entry.language.name === 'en')?.flavor_text || '';
+
+                // Obtenemos las URLs de debilidades y evoluciones
+                const typeUrl = data.types[0]?.type.url || '';
+                const evolutionChainUrl = speciesResponse.data.evolution_chain?.url || '';
+
+                return {
+                    id: data.id,
+                    name: data.name,
+                    description: description,
+                    baseExperience: data.base_experience,
+                    height: data.height,
+                    abilities: data.abilities.map((ability: { ability: { name: string } }) => ability.ability.name),
+                    moves: data.moves.map((move: { move: { name: string } }) => move.move.name),
+                    forms: data.forms.map((form: { name: string }) => form.name),
+                    officialArtwork: {
+                        frontDefault: data?.sprites?.other?.['official-artwork']?.front_default || null
+                    },
+                    types: types,
+                    weaknessUrl: typeUrl,
+                    evolutionsUrl: evolutionChainUrl,
+                    order: data.order,
+                };
+            }
+
+            // Si no hay datos en la respuesta
+            return null;
+        } catch (error) {
+            console.log(`Error fetching Pokémon with name or ID '${nameOrId}':`, error);
+            return null;
+        }
+    },
+
+
     async getWeaknesses(typeUrl: string): Promise<string[]> {
         try {
             const response = await axios.get(typeUrl);
